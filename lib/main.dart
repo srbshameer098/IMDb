@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imdb/Bloc/imbd_bloc.dart';
 
 import 'UI/Home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.blueAccent,
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -15,7 +24,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(designSize: const Size(375, 812),
       builder:(BuildContext context,Widget?child){
-    return MaterialApp(debugShowCheckedModeBanner: false,
+      return BlocProvider(create: (context) => ImbdBloc(),
+    child: MaterialApp(debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -37,7 +47,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const Home(),
-    );}
+    ),
+        );
+    }
     );
   }
 }

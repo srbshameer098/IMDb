@@ -52,8 +52,10 @@ class ApiClient {
           Uri.parse(url),
           headers: {
             'X-RapidAPI-Key':
-            'c564efd7c0msh80fb6c255f50ad4p148477jsn612a79309adf',
-            'X-RapidAPI-Host': 'anime-db.p.rapidapi.com',
+            'dbc587bffamsh2b67e6067435268p1899a2jsn82c62768dbc6',
+            'X-RapidAPI-Host': 'imdb-top-100-movies.p.rapidapi.com',
+
+
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
