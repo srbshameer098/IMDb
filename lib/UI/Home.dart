@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imdb/Bloc/imbd_bloc.dart';
+import 'package:imdb/UI/Videoplayer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../Repository/ModelClass/ImdbModel.dart';
@@ -27,66 +28,49 @@ late ImdbModel data;
 
 class _HomeState extends State<Home> {
   late YoutubePlayerController controller;
+
   @override
   void initState() {
     BlocProvider.of<ImbdBloc>(context).add(FetchImdbEvent());
     super.initState();
-   const url = 'https://www.youtube.com/embed/uYPbbksJxIg';
-   controller =YoutubePlayerController(initialVideoId: YoutubePlayer.convertUrlToId(url)!,
-   flags: const YoutubePlayerFlags(
-     mute: false,
-     loop: false,
-     autoPlay: true,
-       hideControls: false,
-   )
 
-   );addLister((){
-     if(mounted){
-       setState(() {
 
-       });
-     }
-    }
 
-    )
-    ;
+
+
   }
 
   @override
-  Widget build(BuildContext context) => YoutubePlayerBuilder(
-  player: YoutubePlayer(
-    controller:controller,
-  ),
-     builder:(context,player)
-     => Scaffold(
-        backgroundColor: Colors.black12,
-        appBar: AppBar(
-          backgroundColor: Color(0xffF5C418),
-          leading: Padding(
-            padding: EdgeInsets.only(left: 20.w),
-            child: Image.asset("assets/imdb.png",
-              width: 48.w,
-              height: 40.h,),
-          ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 20.w),
-              child: Icon(Icons.notifications),
-            )
-          ],
+  Widget build(BuildContext context) {
+   return Scaffold(
+      backgroundColor: Colors.black12,
+      appBar: AppBar(
+        backgroundColor: Color(0xffF5C418),
+        leading: Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: Image.asset("assets/imdb.png",
+            width: 48.w,
+            height: 40.h,),
         ),
-        body: BlocBuilder<ImbdBloc, ImbdState>(
-          builder: (context, state) {
-
-      if(state is ImbdblocLoading) {
-      return Center(child: CircularProgressIndicator());
-      }
-      if(state is ImbdblocError){
-      return Center(child: Text("ERROR"),);
-      }
-      if (state is ImbdblocLoaded){
-
-        data=BlocProvider.of<ImbdBloc>(context).imdbModel;
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 20.w),
+            child: Icon(Icons.notifications),
+          )
+        ],
+      ),
+      body: BlocBuilder<ImbdBloc, ImbdState>(
+        builder: (context, state) {
+          if (state is ImbdblocLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (state is ImbdblocError) {
+            return Center(child: Text("ERROR"),);
+          }
+          if (state is ImbdblocLoaded) {
+            data = BlocProvider
+                .of<ImbdBloc>(context)
+                .imdbModel;
 
             return SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,25 +96,31 @@ class _HomeState extends State<Home> {
                         SizedBox(height: 10.h,),
                         Row(
                           children: [
-                            Stack(
-                                children: [
-                                  Container(
-                                    width: 100,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(100)
-                                    ),
-                                    child: Image.network(data.bigImage.toString(),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: ( ctx)=>Videoplayer()));
+                              },
+                              child: Stack(
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(100)
+                                      ),
+                                      child: Image.network(
+                                        data.bigImage.toString(),
 
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                      left: 25, top: 35,
-                                      child: Icon(
-                                        Icons.play_arrow, color: Colors.white,
-                                        size: 50,))
+                                    Positioned(
+                                        left: 25, top: 35,
+                                        child: Icon(
+                                          Icons.play_arrow, color: Colors.white,
+                                          size: 50,))
 
-                                ]),
+                                  ]),
+                            ),
                             SizedBox(width: 10.w,),
                             Column(crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -142,7 +132,7 @@ class _HomeState extends State<Home> {
                                       color: Color(0xffF5C418)
                                   ),
 
-                                  child:  Padding(
+                                  child: Padding(
                                     padding: EdgeInsets.all(5.0),
                                     child: Row(
                                       children: [
@@ -189,7 +179,8 @@ class _HomeState extends State<Home> {
                                       ),),
                                   ],
                                 ),
-                                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Writers : ',
                                       style:
@@ -198,7 +189,8 @@ class _HomeState extends State<Home> {
                                           color: Colors.white
                                       ),),
                                     Container(
-                                      width: 130, margin: EdgeInsets.only(top: 4),
+                                      width: 130,
+                                      margin: EdgeInsets.only(top: 4),
                                       child: Text(data.writers.toString(),
                                         style:
                                         TextStyle(
@@ -275,18 +267,7 @@ class _HomeState extends State<Home> {
                             color: Colors.grey,
 
                           ),),
-                        player,
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          child: Text(controller.value.isPlaying ?'Pause':'Play'),
-                          onPressed: (){
-                         if (controller.value.isPlaying){
-                           controller.pause();
-                         }else{
-                           controller.play();
-                         }
-                        },
-                        ),
+
 
                       ],
                     ),
@@ -295,16 +276,18 @@ class _HomeState extends State<Home> {
 
                 ],
               ),
-            );}else{return SizedBox();}
-          },
-        ),
-
+            );
+          } else {
+            return SizedBox();
+          }
+        },
       ),
+
     );
 
-  void addLister(Null Function() param0) {}
+
   }
 
-
+}
 
 
